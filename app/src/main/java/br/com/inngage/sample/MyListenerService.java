@@ -13,6 +13,8 @@ import com.google.android.gms.gcm.GcmListenerService;
 
 import java.util.Random;
 
+import br.com.inngage.sdk.InngageUtils;
+
 /**
  * Created by viniciusdepaula on 17/05/16.
  */
@@ -54,43 +56,40 @@ public class MyListenerService extends GcmListenerService {
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        Intent notificationIntent = new Intent(this, NotificationActivity.class);
+        //Intent notificationIntent = new Intent(this, NotificationActivity.class);
 
         if(data.getString("id") != null) {
 
-            notificationIntent.putExtra("notifyID", data.getString("id"));
+            intent.putExtra("notifyID", data.getString("id"));
         }
         if(data.getString("body") != null) {
 
-            notificationIntent.putExtra("message", data.getString("body"));
+            intent.putExtra("body", data.getString("body"));
+        }
+        if(data.getString("title") != null) {
+
+            intent.putExtra("title", data.getString("title"));
         }
         if(data.getString("url") != null) {
 
-            notificationIntent.putExtra("url", data.getString("url"));
+            intent.putExtra("url", data.getString("url"));
         }
         if(data.getString("image") != null) {
 
-            notificationIntent.putExtra("image", data.getString("image"));
+            intent.putExtra("image", data.getString("image"));
         }
         if(data.getString("additional_data") != null) {
 
-            notificationIntent.putExtra("additional_data", data.getString("additional_data"));
+            intent.putExtra("additional_data", data.getString("additional_data"));
         }
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 
         if(data.getString("title") == null) {
 
-            contentTitle = getApplicationName(getApplicationContext());
-
-        } else {
-
-            contentTitle = data.getString("title");
-        }
-        if(data.getString("title") == null) {
-
-            contentTitle = getApplicationName(getApplicationContext());
+            contentTitle = InngageUtils.getApplicationName(this);
 
         } else {
 
@@ -105,7 +104,8 @@ public class MyListenerService extends GcmListenerService {
             contentText = data.getString("body");
         }
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri defaultSoundUri = RingtoneManager.
+                getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
 
                 .setSmallIcon(R.mipmap.ic_launcher)
